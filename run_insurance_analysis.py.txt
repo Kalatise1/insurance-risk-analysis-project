@@ -1,0 +1,45 @@
+import sqlite3
+import pandas as pd
+import os
+
+db_path = r"C:\Users\kalat\Downloads\Github Projects\insurance-risk-analysis-project\database\insurance_risk_analysis.db"
+output_path = r"C:\Users\kalat\Downloads\Github Projects\insurance-risk-analysis-project\dashboards"
+
+os.makedirs(output_path, exist_ok=True)
+
+conn = sqlite3.connect(db_path)
+
+queries = {
+    "avg_charge_by_smoker": """
+        SELECT smoker, ROUND(AVG(charges), 2) AS avg_charge
+        FROM insurance_customers
+        GROUP BY smoker
+    """,
+    "avg_charge_by_region": """
+        SELECT region, ROUND(AVG(charges), 2) AS avg_charge
+        FROM insurance_customers
+        GROUP BY region
+        ORDER BY avg_charge DESC
+    """,
+    "avg_charge_by_age_group": """
+        SELECT
+            CASE
+                WHEN age BETWEEN 18 AND 29 THEN '18-29'
+                WHEN age BETWEEN 30 AND 39 THEN '30-39'
+                WHEN age BETWEEN 40 AND 49 THEN '40-49'
+                ELSE '50+'
+            END AS age_group,
+            ROUND(AVG(charges), 2) AS avg_charge
+        FROM insurance_customers
+        GROUP BY age_group
+        ORDER BY avg_charge DESC
+    """
+}
+
+for name, query in queries.items():
+    df = pd.read_sql_query(query, conn)
+    df.to_csv(fr"{output_path}\{name}.csv", index=False)
+
+conn.close()
+
+print("Insurance analysis outputs created successfully.")

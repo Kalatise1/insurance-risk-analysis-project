@@ -1,0 +1,15 @@
+import pandas as pd
+import sqlite3
+
+# Load CSV
+df = pd.read_csv(r"C:\Users\kalat\Downloads\Github Projects\insurance-risk-analysis-project\data\insurance.csv")
+
+# Create database
+conn = sqlite3.connect(r"C:\Users\kalat\Downloads\Github Projects\insurance-risk-analysis-project\database\insurance_risk_analysis.db")
+
+# Write table
+df.to_sql("insurance_customers", conn, if_exists="replace", index=False)
+
+conn.close()
+
+print("Database created successfully.")
