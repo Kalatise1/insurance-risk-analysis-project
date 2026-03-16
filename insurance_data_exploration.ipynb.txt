@@ -1,0 +1,174 @@
+
+```
+insurance_data_exploration.ipynb
+```
+
+---
+
+## Insurance Data Exploration
+
+This notebook explores a healthcare insurance dataset to understand the factors that influence medical insurance charges.
+
+The analysis focuses on customer characteristics such as age, smoking status, body mass index (BMI), and geographic region. The goal is to identify patterns that may explain variations in insurance costs.
+
+---
+
+## Import Required Libraries
+
+```python
+import pandas as pd
+```
+
+---
+
+## Load the Dataset
+
+```python
+df = pd.read_csv("../data/insurance.csv")
+
+df.head()
+```
+
+This dataset contains information about insurance customers including age, BMI, smoking status, region, and medical insurance charges.
+
+---
+
+## Dataset Structure
+
+```python
+df.info()
+```
+
+This step helps us understand the structure of the dataset including the number of rows, column names, and data types.
+
+---
+
+## Summary Statistics
+
+```python
+df.describe()
+```
+
+This provides basic statistics such as average values, minimums, maximums, and standard deviations for numeric columns.
+
+---
+
+## Customer Distribution by Smoking Status
+
+```python
+df['smoker'].value_counts()
+```
+
+Smoking is an important lifestyle factor that may significantly influence healthcare costs.
+
+---
+
+## Customer Distribution by Region
+
+```python
+df['region'].value_counts()
+```
+
+This shows how customers are distributed across different geographic regions.
+
+---
+
+## Create Age Groups
+
+Grouping customers by age helps us better understand how healthcare costs change across different life stages.
+
+```python
+df['age_group'] = pd.cut(
+    df['age'],
+    bins=[18,29,39,49,100],
+    labels=['18-29','30-39','40-49','50+']
+)
+
+df[['age','age_group']].head()
+```
+
+---
+
+## Create BMI Categories
+
+BMI is commonly used to classify body weight into health categories.
+
+```python
+def bmi_category(bmi):
+    if bmi < 18.5:
+        return "Underweight"
+    elif bmi < 25:
+        return "Normal"
+    elif bmi < 30:
+        return "Overweight"
+    else:
+        return "Obese"
+
+df['bmi_category'] = df['bmi'].apply(bmi_category)
+
+df[['bmi','bmi_category']].head()
+```
+
+---
+
+## Average Insurance Charges by Smoking Status
+
+```python
+df.groupby('smoker')['charges'].mean()
+```
+
+This analysis helps determine whether smoking status is associated with higher medical insurance costs.
+
+---
+
+## Average Insurance Charges by Age Group
+
+```python
+df.groupby('age_group')['charges'].mean()
+```
+
+Healthcare costs often increase with age due to increased medical needs.
+
+---
+
+## Average Insurance Charges by Region
+
+```python
+df.groupby('region')['charges'].mean()
+```
+
+Regional analysis helps identify whether healthcare costs vary geographically.
+
+---
+
+## Average Insurance Charges by BMI Category
+
+```python
+df.groupby('bmi_category')['charges'].mean()
+```
+
+Higher BMI categories may be associated with higher healthcare expenses due to increased health risks.
+
+---
+
+## Combined Risk Analysis
+
+This step examines how smoking status and BMI together influence insurance costs.
+
+```python
+df.groupby(['smoker','bmi_category'])['charges'].mean()
+```
+
+This helps identify customer segments that represent higher insurance risk.
+
+---
+
+## Conclusion
+
+The exploratory analysis highlights several important patterns in the dataset. Smoking status appears to be the strongest driver of higher insurance charges. Age and BMI also show clear relationships with healthcare costs.
+
+These findings provide useful insights for insurance providers seeking to better understand customer risk profiles and healthcare cost drivers.
+
+---
+
+This notebook complements the SQL analysis and Power BI dashboard included in this project by showing how the dataset was explored and prepared for deeper analysis.
