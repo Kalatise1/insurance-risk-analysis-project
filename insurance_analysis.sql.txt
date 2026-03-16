@@ -1,0 +1,55 @@
+--Total customers
+SELECT COUNT(*) AS total_customers
+FROM insurance_customers;
+
+--Average charge by smoking status
+SELECT smoker, ROUND(AVG(charges), 2) AS avg_charge
+FROM insurance_customers
+GROUP BY smoker;
+
+--Average charge by region
+SELECT region, ROUND(AVG(charges), 2) AS avg_charge
+FROM insurance_customers
+GROUP BY region
+ORDER BY avg_charge DESC;
+
+--Average charge by BMI category
+SELECT
+    CASE
+        WHEN bmi < 18.5 THEN 'Underweight'
+        WHEN bmi < 25 THEN 'Normal'
+        WHEN bmi < 30 THEN 'Overweight'
+        ELSE 'Obese'
+    END AS bmi_category,
+    ROUND(AVG(charges), 2) AS avg_charge
+FROM insurance_customers
+GROUP BY bmi_category
+ORDER BY avg_charge DESC;
+
+--Average charge by age group
+SELECT
+    CASE
+        WHEN age BETWEEN 18 AND 29 THEN '18-29'
+        WHEN age BETWEEN 30 AND 39 THEN '30-39'
+        WHEN age BETWEEN 40 AND 49 THEN '40-49'
+        ELSE '50+'
+    END AS age_group,
+    ROUND(AVG(charges), 2) AS avg_charge
+FROM insurance_customers
+GROUP BY age_group
+ORDER BY avg_charge DESC;
+
+--High risk customer segment
+SELECT
+    smoker,
+    CASE
+        WHEN bmi >= 30 THEN 'Obese'
+        ELSE 'Not Obese'
+    END AS bmi_risk_group,
+    ROUND(AVG(charges), 2) AS avg_charge,
+    COUNT(*) AS customer_count
+FROM insurance_customers
+GROUP BY smoker, bmi_risk_group
+ORDER BY avg_charge DESC;
+
+
